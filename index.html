@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paola Cano Gómez</title>
+<meta name="description" content="Event operations professional across sports, entertainment and hospitality — FIFA World Cup 2026, Paralympic Games Paris 2024, World Para Powerlifting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600&family=Yellowtail&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/vendor/phosphor-light.css">
+<style>
+  :root {
+    --red: #e3170a;
+    --red-hot: #ff3b2f;
+    --wine: #6e0912;
+    --pink: #c92a68;
+    --ink: #0e0a0b;
+    --ink-2: #1a1314;
+    --bg: #f4f3f2;
+    --card: #ffffff;
+    --muted: #5f5658;
+    --hair: rgba(14,10,11,.08);
+    --ease: cubic-bezier(.32,.72,0,1);
+    --spring: cubic-bezier(.34,1.56,.64,1);
+    --display: "Bricolage Grotesque", system-ui, sans-serif;
+    --serif: "Instrument Serif", Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { font-family: "Plus Jakarta Sans", system-ui, sans-serif; color: var(--ink); background: var(--bg); line-height: 1.6; overflow-x: hidden; }
+  body.loading { overflow: hidden; }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--red); color: #fff; }
+  i[class^="ph"] { line-height: 1; }
+
+  /* ---------- global layers ---------- */
+  .grain { position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: .06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 80; background: var(--red); transform-origin: 0 50%; transform: scaleX(0); }
+
+  .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; z-index: 100; pointer-events: none; border-radius: 50%; opacity: 0; }
+  .cursor-dot { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: #fff; mix-blend-mode: difference; transition: opacity .3s; }
+  .cursor-ring { width: 44px; height: 44px; margin: -22px 0 0 -22px; border: 1px solid #fff; mix-blend-mode: difference; display: grid; place-items: center;
+    transition: background .3s, opacity .3s, scale .5s var(--ease); }
+  .cursor-ring span { font-size: 5.5px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: #000; opacity: 0; transition: opacity .2s; }
+  .cursor-ring.big { background: #fff; }
+  .cursor-ring.big span { opacity: 1; }
+
+  /* ---------- loader ---------- */
+  .loader { position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; color: #fff;
+    background: linear-gradient(115deg, var(--wine), var(--red) 55%, var(--pink));
+    transition: transform 1.1s var(--ease); }
+  .loader.done { transform: translateY(-100%); }
+  .loader .sig { font-family: Yellowtail, cursive; font-size: clamp(4rem, 12vw, 8rem); clip-path: inset(0 100% 0 0); animation: write 1.2s var(--ease) .1s forwards; }
+  .loader .count { position: absolute; right: 32px; bottom: 24px; font-family: var(--display); font-weight: 800; font-size: clamp(3rem, 8vw, 6rem); line-height: 1; font-variant-numeric: tabular-nums; }
+  .loader .lbl { position: absolute; left: 32px; bottom: 32px; font-size: .72rem; letter-spacing: .3em; text-transform: uppercase; }
+  @keyframes write { to { clip-path: inset(0 0 0 0); } }
+
+  /* ---------- island nav ---------- */
+  .nav { position: fixed; top: calc(20px + env(safe-area-inset-top, 0px)); left: 50%; z-index: 70; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 4px; padding: 6px; border-radius: 999px;
+    background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22);
+    backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    color: #fff; transition: background .5s var(--ease), border-color .5s; }
+  .nav.solid { background: rgba(14,10,11,.72); border-color: rgba(255,255,255,.1); }
+  .nav .mono { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--red); font-family: Yellowtail, cursive; font-size: 1.3rem; margin-right: 6px; }
+  .nav .links { display: flex; gap: 2px; position: relative; }
+  .nav .links a { position: relative; z-index: 1; font-size: .8rem; font-weight: 500; padding: 9px 16px; border-radius: 999px; }
+  .nav .pill { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 999px; background: rgba(255,255,255,.18); transition: transform .6s var(--ease), opacity .3s; opacity: 0; }
+  .nav .cta { margin-left: 6px; }
+  .burger { display: none; width: 42px; height: 42px; border-radius: 50%; border: 0; background: #fff; position: relative; cursor: pointer; }
+  .burger span { position: absolute; left: 12px; right: 12px; height: 1.5px; background: var(--ink); transition: transform .5s var(--ease); }
+  .burger span:nth-child(1) { top: 16px; } .burger span:nth-child(2) { top: 24px; }
+  .menu-open .burger span:nth-child(1) { transform: translateY(4px) rotate(45deg); }
+  .menu-open .burger span:nth-child(2) { transform: translateY(-4px) rotate(-45deg); }
+  .overlay { position: fixed; inset: 0; z-index: 65; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 0 28px;
+    background: rgba(14,10,11,.86); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+    opacity: 0; pointer-events: none; transition: opacity .6s var(--ease); }
+  .menu-open .overlay { opacity: 1; pointer-events: auto; }
+  .overlay a { font-family: var(--display); font-weight: 800; font-size: 3rem; line-height: 1.1; letter-spacing: -.03em; color: #fff; transform: translateY(48px); opacity: 0; transition: transform .8s var(--ease), opacity .8s var(--ease); }
+  .overlay a em { font-family: var(--serif); font-weight: 400; color: var(--red-hot); }
+  .menu-open .overlay a { transform: none; opacity: 1; }
+  .menu-open .overlay a:nth-child(2) { transition-delay: .06s; } .menu-open .overlay a:nth-child(3) { transition-delay: .12s; }
+  .menu-open .overlay a:nth-child(4) { transition-delay: .18s; } .menu-open .overlay a:nth-child(5) { transition-delay: .24s; } .menu-open .overlay a:nth-child(6) { transition-delay: .3s; }
+
+  /* ---------- buttons (button-in-button) ---------- */
+  .btn { display: inline-flex; align-items: center; gap: 14px; padding: 7px 7px 7px 24px; border-radius: 999px; font-weight: 600; font-size: .9rem; cursor: pointer; border: 0; font-family: inherit;
+    transition: transform .5s var(--ease), background .4s var(--ease), color .4s; }
+  .btn:active { transform: scale(.97); }
+  .btn .ic { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 1.05rem; transition: transform .5s var(--spring); }
+  .btn:hover .ic { transform: translate(2px,-2px) scale(1.06) rotate(-8deg); }
+  .btn-white { background: #fff; color: var(--red); box-shadow: 0 20px 40px -24px rgba(20,14,15,.45); }
+  .btn-white .ic { background: var(--red); color: #fff; }
+  .btn-glass { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.35); }
+  .btn-glass .ic { background: rgba(255,255,255,.18); }
+  .btn-sm { padding: 5px 5px 5px 16px; font-size: .8rem; gap: 10px; }
+  .btn-sm .ic { width: 30px; height: 30px; font-size: .9rem; }
+
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+    background: rgba(227,23,10,.08); color: #c41208; }
+  .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .eyebrow.light { background: rgba(255,255,255,.1); color: #fff; }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; min-height: 100dvh; overflow: hidden; color: #fff; isolation: isolate;
+    background: linear-gradient(118deg, var(--wine) 0%, #b80d0d 22%, var(--red) 50%, #d91f45 78%, var(--pink) 100%); }
+  .orb { position: absolute; border-radius: 50%; filter: blur(70px); z-index: -1; pointer-events: none; }
+  .orb.a { width: 46vw; height: 46vw; left: -12vw; bottom: -18vw; background: #ff6a2b; opacity: .5; }
+  .orb.b { width: 38vw; height: 38vw; right: -8vw; top: -12vw; background: #ff4f9a; opacity: .55; }
+  .spot { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(520px circle at var(--sx, 70%) var(--sy, 40%), rgba(255,255,255,.18), transparent 60%); }
+  .bigword { position: absolute; left: 50%; top: 52%; z-index: -1; white-space: nowrap; pointer-events: none;
+    font-family: var(--display); font-weight: 800; font-size: 21vw; line-height: .8; letter-spacing: -.04em;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,.22); translate: -50% -50%; }
+
+  .hero-grid { max-width: 1360px; margin: 0 auto; min-height: 100dvh; padding: 0 48px; display: grid; grid-template-columns: 1fr 1.05fr; align-items: center; }
+  .intro { padding-top: 60px; }
+  .hi { font-size: .78rem; font-weight: 600; letter-spacing: .35em; text-transform: uppercase; }
+  .name { font-family: Yellowtail, cursive; font-weight: 400; font-size: clamp(5rem, 11vw, 10.5rem); line-height: .9; margin: 4px 0 6px -6px; text-shadow: 0 10px 40px rgba(70,0,0,.35); }
+  .name .ch { display: inline-block; transform: translateY(110%) rotate(8deg); opacity: 0; transition: transform 1.1s var(--ease), opacity 1.1s var(--ease); }
+  .ready .name .ch { transform: none; opacity: 1; }
+  .role { font-family: var(--display); font-weight: 600; font-size: clamp(1.15rem, 1.8vw, 1.5rem); line-height: 1.25; letter-spacing: -.01em; max-width: 470px; }
+  .role em { font-family: var(--serif); font-weight: 400; font-size: 1.15em; }
+  .sub { margin-top: 14px; max-width: 430px; font-size: .98rem; }
+  .ctas { display: flex; gap: 12px; margin-top: 34px; flex-wrap: wrap; }
+  .rise { opacity: 0; transform: translateY(30px); filter: blur(8px); transition: opacity 1s var(--ease), transform 1s var(--ease), filter 1s var(--ease); }
+  .ready .rise { opacity: 1; transform: none; filter: blur(0); }
+  .ready .rise.d1 { transition-delay: .35s; } .ready .rise.d2 { transition-delay: .5s; } .ready .rise.d3 { transition-delay: .65s; }
+
+  .stage { position: relative; align-self: end; height: 100dvh; display: flex; align-items: flex-end; justify-content: center; perspective: 1200px; }
+  .persona-wrap { position: relative; height: 90dvh; max-height: 920px; transform: translateY(40px); opacity: 0; transition: transform 1.4s var(--ease) .2s, opacity 1.2s var(--ease) .2s; }
+  .ready .persona-wrap { transform: none; opacity: 1; }
+  .persona { height: 100%; width: auto; display: block; transform-origin: 50% 100%;
+    filter: drop-shadow(0 40px 50px rgba(20,10,10,.4)); user-select: none; -webkit-user-drag: none;
+    -webkit-mask-image: linear-gradient(to left, transparent 0, #000 9%), linear-gradient(to top, transparent 0, #000 14%);
+    -webkit-mask-composite: source-in; mask-composite: intersect;
+    mask-image: linear-gradient(to left, transparent 0, #000 9%), linear-gradient(to top, transparent 0, #000 14%); }
+  .ring { position: absolute; left: 50%; top: 30%; width: 64%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; border: 1px dashed rgba(255,255,255,.35); animation: spin 40s linear infinite; }
+  @keyframes spin { to { rotate: 360deg; } }
+  .chip { position: absolute; z-index: 3; opacity: 0; transition: opacity 1s var(--ease) 1s; }
+  .ready .chip { opacity: 1; }
+  .chip .in { display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 8px; border-radius: 999px; white-space: nowrap;
+    background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.3); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 20px 40px -20px rgba(20,12,12,.45), inset 0 1px 0 rgba(255,255,255,.3);
+    animation: bob 6s var(--ease) infinite alternate; }
+  .c2 .in { animation-delay: -2s; } .c3 .in { animation-delay: -4s; }
+  @keyframes bob { to { transform: translateY(-14px); } }
+  .chip .ico { width: 34px; height: 34px; border-radius: 50%; background: #fff; color: var(--red); display: grid; place-items: center; font-size: 1.05rem; }
+  .chip b { display: block; font-size: .82rem; line-height: 1.15; }
+  .chip small { display: block; font-size: .72rem; }
+  .chip.c1 { left: 0; top: 26%; } .chip.c2 { right: -10px; top: 46%; } .chip.c3 { left: 6%; bottom: 20%; }
+
+  .marquee { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; overflow: hidden; padding: 16px 0; background: rgba(14,10,11,.88); color: #fff; }
+  .marquee .track { display: flex; width: max-content; animation: marq 38s linear infinite; }
+  .marquee span { display: inline-flex; align-items: center; gap: 28px; padding-right: 28px; font-family: var(--display); font-weight: 600; font-size: 1.05rem; letter-spacing: -.01em; white-space: nowrap; }
+  .marquee span i { color: var(--red-hot); font-size: .9rem; }
+  @keyframes marq { to { transform: translateX(-50%); } }
+  .scroll-cue { position: absolute; left: 48px; bottom: 82px; z-index: 4; display: flex; align-items: center; gap: 10px; font-size: .7rem; letter-spacing: .25em; text-transform: uppercase; }
+  .scroll-cue .line { width: 1px; height: 40px; background: rgba(255,255,255,.4); position: relative; overflow: hidden; }
+  .scroll-cue .line::after { content: ""; position: absolute; inset: 0; background: #fff; animation: drip 2s var(--ease) infinite; }
+  @keyframes drip { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
+
+  /* ---------- sections ---------- */
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 48px; }
+  .sec { padding: 160px 0 40px; }
+  .sec-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; margin-bottom: 64px; flex-wrap: wrap; }
+  h2 { font-family: var(--display); font-weight: 800; font-size: clamp(2.6rem, 6vw, 5.4rem); line-height: .95; letter-spacing: -.045em; margin-top: 20px; }
+  h2 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -.02em; color: #c41208; }
+  .sec-head p { max-width: 380px; color: var(--muted); }
+
+  .reveal { transform: translateY(48px); transition: transform 1.1s var(--ease); }
+  .reveal.in { transform: none; }
+  .reveal.d1 { transition-delay: .08s; } .reveal.d2 { transition-delay: .16s; } .reveal.d3 { transition-delay: .24s; } .reveal.d4 { transition-delay: .32s; }
+
+  /* double-bezel shell */
+  .shell { padding: 6px; border-radius: 32px; background: rgba(14,10,11,.035); box-shadow: inset 0 0 0 1px var(--hair); }
+  .core { height: 100%; border-radius: 26px; background: var(--card); padding: 32px; box-shadow: inset 0 1px 1px rgba(255,255,255,.9), 0 30px 60px -40px rgba(20,14,15,.22); position: relative; overflow: hidden; }
+
+  /* about */
+  .statement { font-family: var(--display); font-weight: 600; font-size: clamp(1.8rem, 3.6vw, 3.2rem); line-height: 1.12; letter-spacing: -.03em; max-width: 1100px; margin: 36px 0 90px; }
+  .statement .w { opacity: .32; transition: opacity .4s var(--ease); }
+  .statement .w.on { opacity: 1; }
+  .statement .w.hl { color: #c41208; }
+  .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+  .b-portrait { grid-column: span 4; grid-row: span 3; }
+  .b-portrait .core { padding: 0; min-height: 520px; background: linear-gradient(160deg, var(--red), var(--wine)); display: flex; align-items: flex-end; justify-content: center; }
+  .b-portrait img { width: 92%; display: block; filter: grayscale(1) contrast(1.05); transition: filter 1s var(--ease), transform 1.2s var(--ease); transform-origin: 50% 100%;
+    -webkit-mask-image: linear-gradient(to top, transparent 0, #000 14%); mask-image: linear-gradient(to top, transparent 0, #000 14%); }
+  .b-portrait:hover img { filter: none; transform: scale(1.04); }
+  .b-portrait .tag { position: absolute; left: 20px; top: 20px; right: 20px; display: flex; justify-content: space-between; color: #fff; font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; z-index: 1; }
+  .b-bio { grid-column: span 8; }
+  .b-bio p { font-size: 1.05rem; color: var(--muted); }
+  .b-bio .k { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .b-bio .k span { font-size: .78rem; font-weight: 500; padding: 7px 14px; border-radius: 999px; background: var(--bg); }
+  .b-stat { grid-column: span 2; }
+  .b-stat .core { display: flex; flex-direction: column; justify-content: space-between; min-height: 190px; padding: 24px; }
+  .b-stat b { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+  .b-stat small { font-size: .78rem; color: var(--muted); line-height: 1.4; }
+  .b-stat.red .core { background: var(--red); color: #fff; } .b-stat.red small { color: #fff; }
+  .b-stat.dark .core { background: var(--ink); color: #fff; } .b-stat.dark small { color: rgba(255,255,255,.75); }
+  .b-lang { grid-column: span 4; }
+  .b-train { grid-column: span 4; }
+  .b-train .core { background: var(--ink); color: #fff; }
+  .b-train h3 { font-family: var(--display); font-weight: 600; font-size: 1.4rem; letter-spacing: -.02em; line-height: 1.2; margin: 14px 0 8px; }
+  .b-train h3 em { font-family: var(--serif); font-weight: 400; color: var(--red-hot); }
+  .b-train p { color: rgba(255,255,255,.75); font-size: .9rem; }
+  .card-title { font-size: .7rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .lang { margin-top: 18px; }
+  .lang .row { display: flex; justify-content: space-between; font-size: .9rem; font-weight: 600; }
+  .lang .row small { font-weight: 500; color: var(--muted); }
+  .bar { height: 6px; border-radius: 99px; background: var(--bg); margin-top: 8px; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--red), var(--pink)); transform-origin: 0 50%; transform: scaleX(0); transition: transform 1.6s var(--ease) .3s; }
+  .in .bar i { transform: scaleX(var(--v)); }
+
+  /* skills */
+  .skills { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+  .skill { grid-column: span 4; }
+  .skill:nth-child(1) { grid-column: span 7; } .skill:nth-child(2) { grid-column: span 5; }
+  .skill:nth-child(6) { grid-column: span 12; }
+  .skill:nth-child(6) .core { min-height: 0; flex-direction: row-reverse; justify-content: flex-end; align-items: center; gap: 28px; }
+  .skill:nth-child(6) .top { flex-direction: column; gap: 10px; margin-left: auto; align-items: flex-end; }
+  .skill .core { min-height: 270px; display: flex; flex-direction: column; justify-content: space-between; transition: transform .7s var(--ease); }
+  .skill .core::before { content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity .5s var(--ease); pointer-events: none;
+    background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(227,23,10,.12), transparent 60%); }
+  .skill:hover .core::before { opacity: 1; }
+  .skill:hover .core { transform: translateY(-6px); }
+  .skill .top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .skill .icon { width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; font-size: 1.8rem; color: var(--red); background: rgba(227,23,10,.07); transition: transform .7s var(--spring), background .4s, color .4s; }
+  .skill:hover .icon { transform: rotate(-10deg) scale(1.08); background: var(--red); color: #fff; }
+  .skill .n { font-family: var(--display); font-weight: 600; color: rgba(14,10,11,.3); }
+  .skill h3 { font-family: var(--display); font-weight: 600; font-size: 1.45rem; letter-spacing: -.02em; line-height: 1.15; margin-bottom: 8px; }
+  .skill p { color: var(--muted); font-size: .93rem; max-width: 420px; }
+
+  /* key moments – dark, pinned horizontal */
+  .dark { background: var(--ink); color: #fff; margin-top: 140px; border-radius: 48px 48px 0 0; position: relative; }
+  .dark h2 em { color: var(--red-hot); }
+  .hscroll { position: relative; }
+  .pin { position: sticky; top: 0; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+  .pin .sec-head { margin-bottom: 40px; }
+  .counter { display: flex; align-items: center; gap: 16px; font-family: var(--display); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .counter .pbar { width: 140px; height: 2px; background: rgba(255,255,255,.15); overflow: hidden; }
+  .counter .pbar i { display: block; height: 100%; background: var(--red-hot); transform-origin: 0 50%; transform: scaleX(.16); }
+  .track { display: flex; gap: 22px; padding: 0 48px; width: max-content; will-change: transform; }
+  .moment { width: min(860px, 86vw); flex: none; padding: 6px; border-radius: 34px; background: rgba(255,255,255,.04); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+  .moment .in-core { height: 100%; border-radius: 28px; padding: 12px; background: linear-gradient(180deg, var(--ink-2), #120d0e); box-shadow: inset 0 1px 1px rgba(255,255,255,.08); position: relative; overflow: hidden; display: grid; grid-template-columns: .85fr 1.15fr; gap: 24px; transition: transform .7s var(--ease); }
+  .moment:hover .in-core { transform: translateY(-6px); }
+  .moment .in-core::after { content: ""; position: absolute; width: 320px; height: 320px; right: -120px; top: -140px; border-radius: 50%; background: var(--red); filter: blur(90px); opacity: .28; transition: opacity .6s var(--ease); pointer-events: none; }
+  .moment:hover .in-core::after { opacity: .55; }
+  .m-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+  .m-num { font-family: var(--display); font-weight: 800; font-size: 4.2rem; line-height: .8; letter-spacing: -.05em; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.5); }
+  .m-date { font-size: .7rem; font-weight: 600; letter-spacing: .14em; padding: 7px 13px; border-radius: 999px; background: rgba(255,255,255,.08); }
+  .moment h3 { font-family: var(--display); font-weight: 600; font-size: 1.5rem; line-height: 1.12; letter-spacing: -.025em; position: relative; z-index: 1; }
+  .m-where { display: flex; align-items: center; gap: 8px; font-size: .86rem; color: #ff6b61; margin-top: 8px; }
+  .moment p { font-size: .9rem; color: rgba(255,255,255,.75); position: relative; z-index: 1; }
+  .m-under { padding: 16px 18px; border-radius: 18px; background: rgba(255,255,255,.05); position: relative; z-index: 1; }
+  .m-under .card-title { color: rgba(255,255,255,.6); display: block; margin-bottom: 6px; }
+  .m-under p { color: rgba(255,255,255,.9); }
+  .track .end { width: 340px; flex: none; display: flex; flex-direction: column; justify-content: center; gap: 22px; padding: 0 20px; }
+  .track .end h3 { font-family: var(--display); font-weight: 800; font-size: 2.6rem; line-height: 1; letter-spacing: -.04em; }
+  .track .end h3 em { font-family: var(--serif); font-weight: 400; color: var(--red-hot); }
+
+  .m-body { display: flex; flex-direction: column; gap: 16px; padding: 18px 18px 18px 0; position: relative; z-index: 1; }
+  .m-media { position: relative; z-index: 1; min-height: 440px; border: 0; padding: 0; border-radius: 20px; overflow: hidden; background: #000; cursor: zoom-in; }
+  .m-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.1); transition: opacity 1.2s var(--ease), transform 4s var(--ease); }
+  .m-media img.on { opacity: 1; transform: scale(1); }
+  .m-media:hover img.on { transform: scale(1.04); }
+  .m-dots { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 2; display: flex; gap: 5px; }
+  .m-dots i { flex: 1; height: 3px; border-radius: 3px; background: rgba(255,255,255,.3); overflow: hidden; }
+  .m-dots i.on { background: #fff; }
+  .m-tag { position: absolute; top: 12px; left: 12px; z-index: 2; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(14,10,11,.7); color: #fff; font-size: .7rem; font-weight: 600; letter-spacing: .08em; }
+
+  /* gallery */
+  .gal-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+  .fchip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; cursor: pointer; font: 500 .84rem/1 "Plus Jakarta Sans", sans-serif;
+    background: rgba(255,255,255,.06); color: #fff; border: 1px solid rgba(255,255,255,.14); transition: background .4s var(--ease), color .4s, transform .4s var(--ease); }
+  .fchip:hover { background: rgba(255,255,255,.12); }
+  .fchip:active { transform: scale(.96); }
+  .fchip small { font-size: .7rem; opacity: .7; }
+  .fchip.on { background: #fff; color: var(--ink); }
+  .masonry { columns: 4 240px; column-gap: 14px; }
+  .g-item { position: relative; display: block; width: 100%; margin: 0 0 14px; padding: 0; border: 0; border-radius: 20px; overflow: hidden; background: var(--ink-2); cursor: zoom-in; break-inside: avoid; }
+  .g-item img { display: block; width: 100%; height: auto; transition: transform 1.1s var(--ease); }
+  .g-item:hover img { transform: scale(1.06); }
+  .g-item figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 48px 16px 14px; text-align: left; color: #fff; font-size: .82rem; line-height: 1.35;
+    background: linear-gradient(transparent, rgba(8,5,6,.85)); transform: translateY(101%); transition: transform .6s var(--ease); }
+  .g-item:hover figcaption, .g-item:focus-visible figcaption { transform: none; }
+  .g-item figcaption b { display: block; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: #ff6b61; margin-bottom: 4px; }
+  .g-item.hide { display: none; }
+  .g-item.pop { animation: pop .8s var(--ease) both; }
+  @keyframes pop { from { opacity: 0; transform: translateY(30px) scale(.96); } }
+
+  /* lightbox */
+  .lb { position: fixed; inset: 0; z-index: 96; display: grid; grid-template-rows: auto 1fr auto; background: rgba(8,5,6,.95); color: #fff; opacity: 0; pointer-events: none; transition: opacity .5s var(--ease); }
+  .lb.open { opacity: 1; pointer-events: auto; }
+  .lb-top { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; }
+  .lb-stage { position: relative; min-height: 0; display: grid; place-items: center; padding: 0 96px; }
+  .lb-stage img { max-width: 100%; max-height: calc(100dvh - 200px); width: auto; height: auto; object-fit: contain; border-radius: 18px; opacity: 0; transform: scale(.96); transition: opacity .5s var(--ease), transform .7s var(--ease); }
+  .lb-stage img.on { opacity: 1; transform: none; }
+  .lb-btn { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-size: 1.3rem; color: #fff; cursor: pointer;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); transition: background .3s, transform .4s var(--ease); }
+  .lb-btn:hover { background: rgba(255,255,255,.18); }
+  .lb-btn:active { transform: scale(.94); }
+  .lb-prev, .lb-next { position: absolute; top: 50%; translate: 0 -50%; }
+  .lb-prev { left: 24px; } .lb-next { right: 24px; }
+  .lb-cap { padding: 18px 24px 28px; text-align: center; }
+  .lb-cap b { display: block; font-family: var(--display); font-weight: 600; font-size: 1.2rem; letter-spacing: -.01em; }
+  .lb-cap span { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: #ff6b61; }
+
+  /* timeline */
+  .dark .sec { padding-top: 110px; }
+  .dark .sec-head p { color: rgba(255,255,255,.7); }
+  .tl { list-style: none; border-top: 1px solid rgba(255,255,255,.1); }
+  .tl li { position: relative; display: grid; grid-template-columns: 170px 1.2fr 1fr 40px; gap: 24px; align-items: center; padding: 26px 8px; border-bottom: 1px solid rgba(255,255,255,.1); overflow: hidden; }
+  .tl li::before { content: ""; position: absolute; inset: 0; background: var(--red); transform: scaleY(0); transform-origin: 50% 100%; transition: transform .6s var(--ease); z-index: 0; }
+  .tl li:hover::before { transform: scaleY(1); }
+  .tl li > * { position: relative; z-index: 1; }
+  .tl time { font-size: .8rem; font-weight: 600; letter-spacing: .1em; color: #ff6b61; transition: color .4s; }
+  .tl li:hover time { color: #fff; }
+  .tl b { font-family: var(--display); font-weight: 600; font-size: 1.3rem; letter-spacing: -.02em; line-height: 1.2; transition: transform .6s var(--ease); }
+  .tl li:hover b { transform: translateX(10px); }
+  .tl span { font-size: .9rem; color: rgba(255,255,255,.7); transition: color .4s; }
+  .tl li:hover span { color: #fff; }
+  .tl .arr { font-size: 1.3rem; opacity: 0; transform: translate(-10px, 10px); transition: transform .6s var(--ease), opacity .4s; }
+  .tl li:hover .arr { opacity: 1; transform: none; }
+
+  /* education */
+  .edu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; padding-bottom: 160px; }
+  .edu .shell { background: rgba(255,255,255,.04); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+  .edu .core { background: var(--ink-2); box-shadow: inset 0 1px 1px rgba(255,255,255,.07); min-height: 260px; display: flex; flex-direction: column; justify-content: space-between; color: #fff; transition: transform .7s var(--ease); }
+  .edu .shell:hover .core { transform: translateY(-6px); }
+  .edu .core > i { font-size: 2rem; color: var(--red-hot); }
+  .edu h3 { font-family: var(--display); font-weight: 600; font-size: 1.2rem; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 8px; }
+  .edu p { font-size: .84rem; color: rgba(255,255,255,.7); }
+  .edu .yr { font-size: .7rem; letter-spacing: .14em; font-weight: 600; color: rgba(255,255,255,.6); margin-top: 10px; display: block; }
+
+  /* contact */
+  .contact { position: relative; overflow: hidden; color: #fff; padding: 140px 0 40px;
+    background: linear-gradient(118deg, var(--wine) 0%, var(--red) 50%, var(--pink) 100%); }
+  .big-marq { overflow: hidden; margin: 30px 0 70px; }
+  .big-marq .track2 { display: flex; width: max-content; animation: marq 26s linear infinite; }
+  .big-marq span { font-family: var(--display); font-weight: 800; font-size: clamp(4rem, 12vw, 11rem); line-height: 1.05; letter-spacing: -.05em; white-space: nowrap; padding-right: .3em; }
+  .big-marq span em { font-family: var(--serif); font-weight: 400; font-style: italic; letter-spacing: -.02em; }
+  .contact-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; align-items: stretch; }
+  .contact .shell { background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22); }
+  .contact .core { background: rgba(14,10,11,.18); box-shadow: inset 0 1px 1px rgba(255,255,255,.25); color: #fff; }
+  .c-line { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,.2); }
+  .c-line .lbl { font-size: .7rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+  .c-line a, .c-line .copy { font-family: var(--display); font-weight: 600; font-size: clamp(1.1rem, 2.2vw, 1.7rem); letter-spacing: -.02em; }
+  .copy { background: none; border: 0; color: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; text-align: left; }
+  .copy i { font-size: 1.1rem; }
+  .ref b { font-family: var(--display); font-weight: 600; font-size: 1.35rem; letter-spacing: -.02em; display: block; margin: 16px 0 6px; line-height: 1.2; }
+  .ref p { font-size: .9rem; }
+  .ref a { text-decoration: underline; text-underline-offset: 3px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 90px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.25); font-size: .8rem; }
+  .foot .sig { font-family: Yellowtail, cursive; font-size: 1.8rem; }
+  .toast { position: fixed; left: 50%; bottom: 28px; z-index: 85; translate: -50% 0; padding: 12px 20px; border-radius: 999px; background: var(--ink); color: #fff; font-size: .85rem; font-weight: 500;
+    display: flex; align-items: center; gap: 8px; transform: translateY(120px); transition: transform .7s var(--spring); }
+  .toast.show { transform: none; }
+  .toast i { color: #4ade80; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .b-stat { grid-column: span 3; }
+    .b-portrait { grid-column: span 5; } .b-bio { grid-column: span 7; }
+    .b-lang, .b-train { grid-column: span 6; }
+    .edu { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .nav { top: calc(14px + env(safe-area-inset-top, 0px)); width: calc(100% - 32px); justify-content: space-between; }
+    .nav .links, .nav .cta { display: none; }
+    .burger { display: block; }
+    .hero-grid { grid-template-columns: 1fr; padding: 110px 16px 0; text-align: center; }
+    .intro { padding-top: 0; }
+    .role, .sub { margin-left: auto; margin-right: auto; }
+    .ctas { justify-content: center; }
+    .stage { height: auto; margin-top: 30px; padding-bottom: 54px; }
+    .persona-wrap { height: auto; width: min(100%, 420px); }
+    .persona { width: 100%; height: auto; }
+    .chip.c1 { left: -6px; top: 18%; } .chip.c2 { right: -6px; top: 44%; } .chip.c3 { display: none; }
+    .chip .in { padding: 6px 12px 6px 6px; } .chip .ico { width: 28px; height: 28px; }
+    .scroll-cue { display: none; }
+    .bigword { top: 64%; font-size: 30vw; }
+    .wrap { padding: 0 16px; }
+    .sec { padding: 100px 0 20px; }
+    .sec-head { margin-bottom: 40px; }
+    .bento, .skills { grid-template-columns: 1fr; gap: 14px; }
+    .bento > *, .skills > * { grid-column: auto !important; }
+    .b-portrait .core { min-height: 420px; }
+    .dark { border-radius: 32px 32px 0 0; margin-top: 100px; }
+    .hscroll { height: auto !important; }
+    .pin { position: relative; height: auto; padding: 100px 0 10px; }
+    .track { width: auto; padding: 0 16px 20px; overflow-x: auto; scroll-snap-type: x mandatory; transform: none !important; scrollbar-width: none; }
+    .track::-webkit-scrollbar { display: none; }
+    .moment { scroll-snap-align: center; }
+    .moment .in-core { grid-template-columns: 1fr; gap: 6px; }
+    .m-media { min-height: 0; aspect-ratio: 4 / 3; }
+    .m-body { padding: 12px 10px 14px; }
+    .masonry { columns: 2 140px; column-gap: 10px; }
+    .g-item { margin-bottom: 10px; border-radius: 14px; }
+    .g-item figcaption { display: none; }
+    .lb-stage { padding: 0 12px; }
+    .lb-prev, .lb-next { top: auto; bottom: -70px; translate: none; width: 44px; height: 44px; }
+    .lb-cap { padding-bottom: 80px; }
+    .track .end { display: none; }
+    .tl li { grid-template-columns: 1fr; gap: 4px; padding: 20px 4px; }
+    .tl .arr { display: none; }
+    .edu { grid-template-columns: 1fr; padding-bottom: 100px; }
+    .contact { padding-top: 100px; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .c-line { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .foot { flex-direction: column; text-align: center; }
+  }
+  @media (hover: none), (pointer: coarse) { .cursor-dot, .cursor-ring { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: .01s !important; transition-delay: 0s !important; }
+    .reveal, .rise { opacity: 1; transform: none; filter: none; }
+    .statement .w { opacity: 1; }
+  }
+</style>
+</head>
+<body class="loading">
+
+<div class="loader" aria-hidden="true">
+  <div class="sig">Paola</div>
+  <div class="lbl">Portfolio 2026</div>
+  <div class="count">0</div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"><span>View</span></div>
+<div class="toast" role="status" aria-live="polite"><i class="ph-light ph-check-circle"></i><span>Email copied</span></div>
+
+<nav class="nav" aria-label="Main">
+  <a href="#top" class="mono" aria-label="Back to top">P</a>
+  <div class="links">
+    <span class="pill" aria-hidden="true"></span>
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#work">Work</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#experience">Experience</a>
+  </div>
+  <a href="#contact" class="btn btn-white btn-sm cta magnetic">Let's talk <span class="ic"><i class="ph-light ph-arrow-up-right"></i></span></a>
+  <button class="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+</nav>
+<div class="overlay" aria-hidden="true">
+  <a href="#about">About</a>
+  <a href="#skills">Skills</a>
+  <a href="#work">Key <em>moments</em></a>
+  <a href="#gallery">Gallery</a>
+  <a href="#experience">Experience</a>
+  <a href="#contact">Let's <em>talk</em></a>
+</div>
+
+<header class="hero" id="top">
+  <div class="orb a"></div><div class="orb b"></div>
+  <div class="spot"></div>
+  <div class="bigword" data-depth="-30" aria-hidden="true">OPERATIONS</div>
+
+  <div class="hero-grid">
+    <div class="intro">
+      <p class="hi rise">Hi, I'm</p>
+      <h1 class="name" aria-label="Paola">Paola</h1>
+      <p class="role rise d1">Event Operations across <em>sports, entertainment</em> &amp; hospitality.</p>
+      <p class="sub rise d2">Live event coordination, logistics, protocol, and athlete &amp; VIP services, from Estadio Azteca to the Paralympic Games in Paris.</p>
+      <div class="ctas rise d3">
+        <a href="#work" class="btn btn-white magnetic">See my work <span class="ic"><i class="ph-light ph-arrow-down-right"></i></span></a>
+        <a href="#contact" class="btn btn-glass magnetic">Let's talk <span class="ic"><i class="ph-light ph-chat-circle"></i></span></a>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="ring" aria-hidden="true"></div>
+      <div class="persona-wrap">
+        <img class="persona" src="assets/paola.webp" alt="Paola Cano Gómez pointing at the camera, smiling" width="730" height="1050">
+      </div>
+      <div class="chip c1" data-depth="26"><div class="in"><span class="ico"><i class="ph-light ph-soccer-ball"></i></span><span><b>FIFA World Cup 2026</b><small>Hospitality · Mexico City</small></span></div></div>
+      <div class="chip c2" data-depth="-34"><div class="in"><span class="ico"><i class="ph-light ph-medal"></i></span><span><b>Paris 2024</b><small>Paralympic Games</small></span></div></div>
+      <div class="chip c3" data-depth="18"><div class="in"><span class="ico"><i class="ph-light ph-globe-hemisphere-west"></i></span><span><b>66 countries</b><small>World Para Powerlifting</small></span></div></div>
+    </div>
+  </div>
+
+  <div class="scroll-cue"><span class="line"></span>Scroll</div>
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>FIFA World Cup 2026 <i class="ph-light ph-asterisk"></i> Paralympic Games Paris 2024 <i class="ph-light ph-asterisk"></i> World Para Powerlifting <i class="ph-light ph-asterisk"></i> TikTok Awards 2026 <i class="ph-light ph-asterisk"></i> WTA 125 <i class="ph-light ph-asterisk"></i> Shakira Stadium Concert <i class="ph-light ph-asterisk"></i> Liga MX <i class="ph-light ph-asterisk"></i></span>
+      <span>FIFA World Cup 2026 <i class="ph-light ph-asterisk"></i> Paralympic Games Paris 2024 <i class="ph-light ph-asterisk"></i> World Para Powerlifting <i class="ph-light ph-asterisk"></i> TikTok Awards 2026 <i class="ph-light ph-asterisk"></i> WTA 125 <i class="ph-light ph-asterisk"></i> Shakira Stadium Concert <i class="ph-light ph-asterisk"></i> Liga MX <i class="ph-light ph-asterisk"></i></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ABOUT -->
+  <section class="sec wrap" id="about">
+    <div class="reveal"><span class="eyebrow">01 · About</span></div>
+    <p class="statement" data-hl="12+ 40,000 four 66">I keep live events calm, precise and on schedule — across 12+ international events, crowds of 40,000, four countries of operation and athletes from 66 nations.</p>
+
+    <div class="bento">
+      <div class="shell b-portrait reveal" data-cursor="Hola!">
+        <div class="core">
+          <div class="tag"><span>Paola Cano Gómez</span><span>2026</span></div>
+          <img src="assets/paola.webp" alt="" width="730" height="1050" loading="lazy">
+        </div>
+      </div>
+      <div class="shell b-bio reveal d1">
+        <div class="core">
+          <span class="card-title">Professional profile</span>
+          <p style="margin-top:14px">Event operations professional with experience across international sport and live events, including the FIFA World Cup 2026, the Paralympic Games Paris 2024, and the World Para Powerlifting Championship, alongside corporate, social, and broadcast work. Trained in event protocol and sports management in Europe. Comfortable across logistics, hospitality, athlete services, and press coordination, often working across several countries and with more than one team at a time.</p>
+          <div class="k"><span>Live event coordination</span><span>Logistics</span><span>Protocol</span><span>Athlete &amp; VIP services</span></div>
+        </div>
+      </div>
+      <div class="shell b-stat red reveal d1"><div class="core"><b data-count="12" data-suffix="+">0</b><small>International events</small></div></div>
+      <div class="shell b-stat reveal d2"><div class="core"><b data-count="66">0</b><small>Countries represented · World Para Powerlifting</small></div></div>
+      <div class="shell b-stat dark reveal d3"><div class="core"><b data-count="40000">0</b><small>Attendees · Shakira stadium concert</small></div></div>
+      <div class="shell b-stat reveal d4"><div class="core"><b data-count="4">0</b><small>Countries of operation · MX · FR · GE · ES</small></div></div>
+      <div class="shell b-lang reveal">
+        <div class="core">
+          <span class="card-title">Languages</span>
+          <div class="lang"><div class="row">Spanish <small>Native</small></div><div class="bar"><i style="--v:1"></i></div></div>
+          <div class="lang"><div class="row">English <small>C1 — Advanced</small></div><div class="bar"><i style="--v:.85"></i></div></div>
+          <div class="lang"><div class="row">French <small>A1/A2 — Beginner</small></div><div class="bar"><i style="--v:.25"></i></div></div>
+        </div>
+      </div>
+      <div class="shell b-train reveal d1">
+        <div class="core">
+          <span class="card-title" style="color:rgba(255,255,255,.65)">Trained in Europe</span>
+          <h3>Cruyff Institute, <em>Barcelona</em> &amp; Escuela Internacional de Protocolo, <em>Madrid</em></h3>
+          <p>Event protocol and sports management, put to work on matchdays, concerts and championships.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="sec wrap" id="skills">
+    <div class="sec-head">
+      <div class="reveal"><span class="eyebrow">02 · Skills</span><h2>Core <em>competencies</em></h2></div>
+      <p class="reveal d1">Six things I bring to every venue, whether it's a VIP lounge, a backstage corridor or an anti-doping station.</p>
+    </div>
+    <div class="skills">
+      <div class="shell skill reveal"><div class="core"><div class="top"><span class="icon"><i class="ph-light ph-identification-badge"></i></span><span class="n">01</span></div><div><h3>Event Protocol &amp; Accreditation</h3><p>Planning access, credentialing, and formal protocol for high-profile events.</p></div></div></div>
+      <div class="shell skill reveal d1"><div class="core"><div class="top"><span class="icon"><i class="ph-light ph-champagne"></i></span><span class="n">02</span></div><div><h3>Hospitality &amp; Athlete / VIP Services</h3><p>Guest experience, athlete services, and VIP care under tight schedules.</p></div></div></div>
+      <div class="shell skill reveal"><div class="core"><div class="top"><span class="icon"><i class="ph-light ph-path"></i></span><span class="n">03</span></div><div><h3>Logistics Coordination</h3><p>Multi-team, multi-country logistics from setup through breakdown.</p></div></div></div>
+      <div class="shell skill reveal d1"><div class="core"><div class="top"><span class="icon"><i class="ph-light ph-microphone-stage"></i></span><span class="n">04</span></div><div><h3>Press &amp; Media Coordination</h3><p>Media access, matchday interviews, and press-committee support.</p></div></div></div>
+      <div class="shell skill reveal d2"><div class="core"><div class="top"><span class="icon"><i class="ph-light ph-handshake"></i></span><span class="n">05</span></div><div><h3>Vendor &amp; Supplier Coordination</h3><p>Recruiting, onboarding, and managing vendor relationships on-site.</p></div></div></div>
+      <div class="shell skill reveal d3"><div class="core"><div class="top"><span class="icon"><i class="ph-light ph-lightning"></i></span><span class="n">06</span></div><div><h3>On-site Problem Resolution</h3><p>Calm, fast decision-making under pressure, live, in the moment.</p></div></div></div>
+    </div>
+  </section>
+
+  <!-- KEY MOMENTS + EXPERIENCE + EDUCATION (dark) -->
+  <div class="dark">
+    <section class="hscroll" id="work">
+      <div class="pin">
+        <div class="wrap">
+          <div class="sec-head">
+            <div><span class="eyebrow light">03 · Selected work</span><h2>Key <em>moments</em></h2></div>
+            <div class="counter"><span class="cur">01</span><span class="pbar"><i></i></span><span>06</span></div>
+          </div>
+        </div>
+        <div class="track">
+          <article class="moment" data-ev="fifa"><div class="in-core"><button class="m-media" data-cursor="View" aria-label="Open photos"></button><div class="m-body">
+            <div class="m-top"><span class="m-num">01</span><span class="m-date">JUN – JUL 2026</span></div>
+            <div><h3>Hospitality Services</h3><div class="m-where"><i class="ph-light ph-map-pin"></i>FIFA World Cup 2026 · Mexico City</div></div>
+            <p>Managed the guest experience inside the VIP hospitality lounges at Estadio Azteca, handling check-in, seating, and service for around 500 high-profile guests across 5 matchdays.</p>
+            <div class="m-under"><span class="card-title">Under pressure</span><p>Schedules changed with little notice, so I prioritized on the spot and stayed in constant contact with security and venue staff so the guest experience never showed the pressure behind it.</p></div>
+          </div></div></article>
+          <article class="moment" data-ev="paris"><div class="in-core"><button class="m-media" data-cursor="View" aria-label="Open photos"></button><div class="m-body">
+            <div class="m-top"><span class="m-num">02</span><span class="m-date">AUG – SEP 2024</span></div>
+            <div><h3>Equipment Unit Staff — Para Powerlifting</h3><div class="m-where"><i class="ph-light ph-map-pin"></i>Paralympic Games Paris 2024 · Paris</div></div>
+            <p>Supported the international operations team responsible for competition equipment, making sure every piece met technical and classification requirements ahead of each session.</p>
+            <div class="m-under"><span class="card-title">Under pressure</span><p>One equipment error could affect an athlete's eligibility, so I double-checked every detail against strict Paralympic protocol with a multinational team, across language differences.</p></div>
+          </div></div></article>
+          <article class="moment" data-ev="tbilisi"><div class="in-core"><button class="m-media" data-cursor="View" aria-label="Open photos"></button><div class="m-body">
+            <div class="m-top"><span class="m-num">03</span><span class="m-date">APR – JUN 2024</span></div>
+            <div><h3>Production &amp; Logistics Staff</h3><div class="m-where"><i class="ph-light ph-map-pin"></i>World Para Powerlifting Championship · Tbilisi</div></div>
+            <p>Coordinated athlete transport and arrivals before the championship, then managed venue production and visuals during competition, alongside the live streaming broadcast.</p>
+            <div class="m-under"><span class="card-title">Under pressure</span><p>We bridged the language barrier with the Georgian team through simple language, visual cues and constant check-ins, while splitting focus between the venue and the stream.</p></div>
+          </div></div></article>
+          <article class="moment" data-ev="shakira"><div class="in-core"><button class="m-media" data-cursor="View" aria-label="Open photos"></button><div class="m-body">
+            <div class="m-top"><span class="m-num">04</span><span class="m-date">JUN – SEP 2025</span></div>
+            <div><h3>Production &amp; Fan Experience Staff</h3><div class="m-where"><i class="ph-light ph-map-pin"></i>Shakira — Stadium Concert · Querétaro</div></div>
+            <p>Coordinated the fans selected to enter alongside the artist, managing section upgrades from B to A, then locating each fan and personally walking them to their spot.</p>
+            <div class="m-under"><span class="card-title">Under pressure</span><p>With around 40,000 people in the stadium, I kept track of specific fans in the crowd and made every upgrade happen without holding up the flow of the show.</p></div>
+          </div></div></article>
+          <article class="moment" data-ev="tiktok"><div class="in-core"><button class="m-media" data-cursor="View" aria-label="Open photos"></button><div class="m-body">
+            <div class="m-top"><span class="m-num">05</span><span class="m-date">FEB 2026</span></div>
+            <div><h3>Backstage Coordinator</h3><div class="m-where"><i class="ph-light ph-map-pin"></i>TikTok Awards 2026 · Mexico City</div></div>
+            <p>Coordinated the arrival of 20 artists with the backstage team and had every dressing room ready. Once the broadcast went live, I walked each artist to backstage in time for their performance.</p>
+            <div class="m-under"><span class="card-title">Under pressure</span><p>Twenty schedules at once meant constant check-ins, catching delays early, and adjusting the lineup on the fly when an artist needed more time.</p></div>
+          </div></div></article>
+          <article class="moment" data-ev="wta"><div class="in-core"><button class="m-media" data-cursor="View" aria-label="Open photos"></button><div class="m-body">
+            <div class="m-top"><span class="m-num">06</span><span class="m-date">OCT 2025</span></div>
+            <div><h3>Anti-Doping &amp; Athlete Services</h3><div class="m-where"><i class="ph-light ph-map-pin"></i>WTA 125 · Querétaro</div></div>
+            <p>Supported anti-doping procedures for around 48 players, following official WTA protocol and chaperoning athletes through each stage of the process.</p>
+            <div class="m-under"><span class="card-title">Under pressure</span><p>Precision and discretion over visible production: every step documented correctly, every interaction handled with care, because one small slip could compromise the process.</p></div>
+          </div></div></article>
+          <div class="end">
+            <h3>Your event <em>could be next.</em></h3>
+            <a href="#contact" class="btn btn-white magnetic" style="align-self:flex-start">Let's talk <span class="ic"><i class="ph-light ph-arrow-up-right"></i></span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec wrap" id="gallery">
+      <div class="sec-head">
+        <div class="reveal"><span class="eyebrow light">04 · On the ground</span><h2>Behind the <em>scenes</em></h2></div>
+        <p class="reveal d1">Venues, backstage corridors and control rooms. Filter by event and tap any photo to open it full screen.</p>
+      </div>
+      <div class="gal-filters reveal" role="group" aria-label="Filter photos by event"></div>
+      <div class="masonry"></div>
+    </section>
+
+    <section class="sec wrap" id="experience">
+      <div class="sec-head">
+        <div class="reveal"><span class="eyebrow light">05 · Experience</span><h2>Full career <em>timeline</em></h2></div>
+        <p class="reveal d1">Twelve roles across football, Paralympic sport, tennis, music and weddings, from 2024 to today.</p>
+      </div>
+      <ol class="tl">
+        <li class="reveal"><time>JUN–JUL 2026</time><b>Hospitality Services</b><span>FIFA World Cup 2026 · Mexico City</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>FEB–MAR 2026</time><b>Access &amp; Attendee Coordinator</b><span>Mexican Football Federation (FMF) — National Congress</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>FEB 2026</time><b>Backstage Coordinator</b><span>TikTok Awards 2026 · Mexico City</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>FEB–APR 2026</time><b>Vendor Development Coordinator</b><span>Expo WAFE Manufacturing</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>JAN 2026</time><b>Wedding &amp; Social Events Coordinator</b><span>Adriana Sotomayor Wedding Planner · Querétaro</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>OCT 2025</time><b>Anti-Doping &amp; Athlete Services</b><span>WTA 125 · Querétaro</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>JUN–SEP 2025</time><b>Production &amp; Fan Experience Staff</b><span>Shakira — Stadium Concert · Querétaro</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>FEB–MAR 2025</time><b>Protocol &amp; Logistics Staff</b><span>Premios AEVEA (Spanish Wedding Industry Awards) · Madrid</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>2024–2026</time><b>Press Staff (Freelance)</b><span>Querétaro Fútbol Club (Liga MX) — Men's &amp; Women's Teams</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>AUG–SEP 2024</time><b>Equipment Unit Staff (Volunteer)</b><span>Paralympic Games Paris 2024 · Para Powerlifting</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>APR–JUN 2024</time><b>Production &amp; Logistics Staff</b><span>World Para Powerlifting Championship · Tbilisi</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+        <li class="reveal"><time>2024</time><b>Press Committee Member / Community Manager</b><span>Acción Sports Leadership Program · La Esférica MX</span><i class="ph-light ph-arrow-up-right arr"></i></li>
+      </ol>
+    </section>
+
+    <section class="sec wrap" id="education">
+      <div class="sec-head">
+        <div class="reveal"><span class="eyebrow light">06 · Education</span><h2>Where I <em>trained</em></h2></div>
+      </div>
+      <div class="edu">
+        <div class="shell reveal"><div class="core"><i class="ph-light ph-graduation-cap"></i><div><h3>B.A., Entertainment Business Management</h3><p>Universidad Anáhuac Querétaro · Minor in Sports Business Management</p><span class="yr">2022 – 2026</span></div></div></div>
+        <div class="shell reveal d1"><div class="core"><i class="ph-light ph-crown-simple"></i><div><h3>Specialization, Event Management</h3><p>Escuela Internacional de Protocolo · Madrid, Spain</p><span class="yr">JAN – JUN 2025</span></div></div></div>
+        <div class="shell reveal d2"><div class="core"><i class="ph-light ph-soccer-ball"></i><div><h3>Diploma, Sport Management</h3><p>Cruyff Institute · Barcelona, Spain</p><span class="yr">DEC 2025</span></div></div></div>
+        <div class="shell reveal d3"><div class="core"><i class="ph-light ph-flag-banner"></i><div><h3>Diploma, Leadership in Sport</h3><p>Acción · Anáhuac Querétaro</p><span class="yr">JUN 2023 – DEC 2026</span></div></div></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="contact" id="contact">
+  <div class="wrap"><span class="eyebrow light">07 · Contact</span></div>
+  <div class="big-marq" aria-hidden="true">
+    <div class="track2"><span>Let's work <em>together</em> —</span><span>Let's work <em>together</em> —</span></div>
+  </div>
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="shell reveal"><div class="core">
+        <div class="c-line"><span class="lbl">Email</span><button class="copy" data-copy="pcanogomez@hotmail.com" aria-label="Copy email address">pcanogomez@hotmail.com <i class="ph-light ph-copy"></i></button></div>
+        <div class="c-line"><span class="lbl">Phone</span><a href="tel:+524423602046">+52 (442) 360 2046</a></div>
+        <div class="c-line"><span class="lbl">LinkedIn</span><a href="https://linkedin.com/in/paola-cano-gomez" target="_blank" rel="noopener">paola-cano-gomez ↗</a></div>
+        <div style="margin-top:22px"><a href="mailto:pcanogomez@hotmail.com" class="btn btn-white magnetic">Send an email <span class="ic"><i class="ph-light ph-paper-plane-tilt"></i></span></a></div>
+      </div></div>
+      <div class="shell reveal d1"><div class="core ref">
+        <span class="card-title" style="color:#fff">Reference</span>
+        <b>Lisandro Alfonso Meza De Los Cobos</b>
+        <p>Program Director, Entertainment Business Management, Universidad Anáhuac Querétaro</p>
+        <p style="margin-top:14px"><a href="mailto:lisandro.meza@anahuac.mx">lisandro.meza@anahuac.mx</a><br>+52 442 149 3299</p>
+      </div></div>
+    </div>
+    <div class="foot">
+      <span class="sig">Paola</span>
+      <span>Paola Cano Gómez · Professional Portfolio 2026</span>
+      <a href="#top" class="btn btn-glass btn-sm magnetic">Back to top <span class="ic"><i class="ph-light ph-arrow-up"></i></span></a>
+    </div>
+  </div>
+</footer>
+
+<div class="lb" role="dialog" aria-modal="true" aria-label="Photo viewer" aria-hidden="true">
+  <div class="lb-top"><span class="lb-count">1 / 1</span><button class="lb-btn lb-close" aria-label="Close"><i class="ph-light ph-x"></i></button></div>
+  <div class="lb-stage">
+    <img src="assets/gallery/s04-80b756cb.webp" alt="">
+    <button class="lb-btn lb-prev" aria-label="Previous photo"><i class="ph-light ph-arrow-left"></i></button>
+    <button class="lb-btn lb-next" aria-label="Next photo"><i class="ph-light ph-arrow-right"></i></button>
+  </div>
+  <div class="lb-cap"><span></span><b></b></div>
+</div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  // ---- photos from the Canva deck: [file, w, h, caption]
+  const EVENTS = {
+    fifa: ['FIFA World Cup 2026', [
+      ['s04-80b756cb', 568, 698, 'Matchday at Estadio Ciudad de México'],
+      ['s04-d6f0dc91', 1380, 1194, 'The hospitality team at the FIFA World Cup 2026 desk'],
+      ['s04-550a3512', 720, 799, 'Inside the VIP hospitality lounge'],
+      ['s04-660f72ae', 744, 1044, 'Kick-off from the stands'],
+      ['s01-9533f338', 704, 1194, 'Outside the stadium before the gates open']]],
+    paris: ['Paralympic Games Paris 2024', [
+      ['s05-b3db2bed', 822, 854, 'On the field of play, Para Powerlifting'],
+      ['s05-f9235175', 944, 706, 'The international equipment unit team'],
+      ['s05-5d8918d6', 696, 922, 'Warm-up area set for competition'],
+      ['s05-afe65781', 692, 1120, 'Start lists checked against protocol']]],
+    tbilisi: ['World Para Powerlifting · Tbilisi', [
+      ['s06-54e3945e', 744, 1176, 'Running venue production and visuals'],
+      ['s06-68234777', 992, 1188, 'The Anáhuac team at the Para Powerlifting World Cup'],
+      ['s06-bde6c370', 696, 522, 'Medal ceremony on the podium'],
+      ['s06-6426cec6', 682, 1048, 'Production desk during competition'],
+      ['s06-904cf143', 1058, 530, 'Live stream and timing setup']]],
+    shakira: ['Shakira · Stadium Concert', [
+      ['s07-a2bd0db3', 1002, 762, 'The fan experience crew on the pitch'],
+      ['s07-a86605fc', 748, 1276, 'Fireworks over the stage'],
+      ['s07-de2f65d5', 728, 1202, 'Selected fans ready to go in'],
+      ['s07-f6a7dd1a', 507, 799, 'The stage before doors open']]],
+    tiktok: ['TikTok Awards 2026', [
+      ['s08-9fe7d593', 666, 1212, 'Backstage crew on the TikTok Awards stage'],
+      ['s08-a817605d', 722, 1122, 'Live performance during the broadcast'],
+      ['s08-a1b05636', 694, 1056, 'The set before the show'],
+      ['s08-5a3b4490', 742, 1082, 'Dressing room ready for an artist']]],
+    wta: ['WTA 125 · Querétaro', [
+      ['s09-ee7b03d6', 738, 1086, 'Courtside at the WTA 125'],
+      ['s09-2ddd7009', 726, 1030, 'Athlete services staff on the move'],
+      ['s09-9262c4be', 722, 1178, 'A player between points'],
+      ['s09-17aeaaf5', 986, 552, 'Night session under the lights']]]
+  };
+  const src = f => `assets/gallery/${f}.webp`;
+  const ALL = Object.entries(EVENTS).flatMap(([ev, [label, items]]) => items.map(([f, w, h, cap]) => ({ ev, label, f, w, h, cap })));
+
+  // lightbox
+  const lb = $('.lb'), lbImg = $('.lb-stage img', lb), lbCount = $('.lb-count', lb);
+  let lbList = [], lbI = 0;
+  const lbShow = i => {
+    lbI = (i + lbList.length) % lbList.length;
+    const p = lbList[lbI];
+    lbImg.classList.remove('on');
+    lbImg.onload = () => lbImg.classList.add('on');
+    lbImg.src = src(p.f); lbImg.alt = p.cap;
+    lbCount.textContent = `${lbI + 1} / ${lbList.length}`;
+    $('.lb-cap span', lb).textContent = p.label;
+    $('.lb-cap b', lb).textContent = p.cap;
+  };
+  const lbOpen = (list, i) => {
+    lbList = list; lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden'; lbShow(i); $('.lb-close', lb).focus();
+  };
+  const lbClose = () => { lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; };
+  $('.lb-prev', lb).onclick = () => lbShow(lbI - 1);
+  $('.lb-next', lb).onclick = () => lbShow(lbI + 1);
+  $('.lb-close', lb).onclick = lbClose;
+  lb.addEventListener('click', e => { if (e.target === lb || e.target.classList.contains('lb-stage')) lbClose(); });
+  addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') lbClose();
+    if (e.key === 'ArrowRight') lbShow(lbI + 1);
+    if (e.key === 'ArrowLeft') lbShow(lbI - 1);
+  });
+  let tx0 = null;
+  lb.addEventListener('touchstart', e => tx0 = e.touches[0].clientX, { passive: true });
+  lb.addEventListener('touchend', e => { if (tx0 === null) return; const d = e.changedTouches[0].clientX - tx0; if (Math.abs(d) > 50) lbShow(lbI + (d < 0 ? 1 : -1)); tx0 = null; });
+
+  // moment cards: crossfading photo panel
+  $$('.moment[data-ev]').forEach(m => {
+    const list = ALL.filter(p => p.ev === m.dataset.ev), media = $('.m-media', m);
+    media.innerHTML = list.map((p, i) => `<img src="${src(p.f)}" alt="${p.cap}" loading="lazy" class="${i ? '' : 'on'}">`).join('')
+      + `<span class="m-tag"><i class="ph-light ph-images"></i>${list.length} photos</span>`
+      + `<span class="m-dots">${list.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</span>`;
+    const imgs = $$('img', media), dots = $$('.m-dots i', media);
+    let k = 0;
+    if (!calm) setInterval(() => {
+      if (document.hidden) return;
+      imgs[k].classList.remove('on'); dots[k].classList.remove('on');
+      k = (k + 1) % imgs.length;
+      imgs[k].classList.add('on'); dots[k].classList.add('on');
+    }, 3400 + Math.random() * 800);
+    media.addEventListener('click', () => lbOpen(list, k));
+  });
+
+  // gallery grid + filters
+  const grid = $('.masonry'), filters = $('.gal-filters');
+  grid.innerHTML = ALL.map((p, i) => `<button class="g-item" data-ev="${p.ev}" data-i="${i}" data-cursor="View"><img src="${src(p.f)}" alt="${p.cap}" width="${p.w}" height="${p.h}" loading="lazy"><figcaption><b>${p.label}</b>${p.cap}</figcaption></button>`).join('');
+  filters.innerHTML = `<button class="fchip on" data-f="all">All <small>${ALL.length}</small></button>`
+    + Object.entries(EVENTS).map(([ev, [label, items]]) => `<button class="fchip" data-f="${ev}">${label.split(' · ')[0]} <small>${items.length}</small></button>`).join('');
+  let shown = ALL;
+  filters.addEventListener('click', e => {
+    const b = e.target.closest('.fchip'); if (!b) return;
+    $$('.fchip', filters).forEach(c => c.classList.toggle('on', c === b));
+    const f = b.dataset.f;
+    shown = ALL.filter(p => f === 'all' || p.ev === f);
+    $$('.g-item', grid).forEach((g, n) => {
+      const vis = f === 'all' || g.dataset.ev === f;
+      g.classList.toggle('hide', !vis);
+      g.classList.remove('pop');
+      if (vis && !calm) { void g.offsetWidth; g.style.animationDelay = (n % 8) * .04 + 's'; g.classList.add('pop'); }
+    });
+  });
+  grid.addEventListener('click', e => {
+    const g = e.target.closest('.g-item'); if (!g) return;
+    const p = ALL[+g.dataset.i];
+    lbOpen(shown, shown.indexOf(p));
+  });
+
+  // hero name → letters
+  const name = $('.name');
+  name.innerHTML = [...name.textContent].map((c, i) => `<span class="ch" aria-hidden="true" style="transition-delay:${.15 + i * .07}s">${c}</span>`).join('');
+
+  // loader 0 → 100, then curtain up
+  const loader = $('.loader'), count = $('.count', loader);
+  const t0 = performance.now(), dur = calm ? 1 : 1500;
+  (function tick(t) {
+    const p = Math.min((t - t0) / dur, 1);
+    count.textContent = Math.round(p * 100);
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
+  // timer, not rAF, ends the intro so a throttled background tab never stays locked
+  setTimeout(() => {
+    count.textContent = 100;
+    loader.classList.add('done');
+    document.body.classList.replace('loading', 'ready');
+    setTimeout(() => loader.remove(), 1200);
+  }, dur);
+
+  // cursor + hero parallax (single rAF loop, lerped)
+  const dot = $('.cursor-dot'), ring = $('.cursor-ring'), label = $('span', ring);
+  const hero = $('.hero'), persona = $('.persona'), spot = $('.spot');
+  const layers = $$('[data-depth]', hero);
+  let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my, hx = 0, hy = 0, tx = 0, ty = 0;
+
+  addEventListener('pointermove', e => {
+    mx = e.clientX; my = e.clientY;
+    if (fine) dot.style.opacity = ring.style.opacity = 1;
+    const r = hero.getBoundingClientRect();
+    if (e.clientY < r.bottom) {
+      tx = (e.clientX / innerWidth) * 2 - 1;
+      ty = ((e.clientY - r.top) / r.height) * 2 - 1;
+      spot.style.setProperty('--sx', e.clientX + 'px');
+      spot.style.setProperty('--sy', (e.clientY - r.top) + 'px');
+    }
+  }, { passive: true });
+  hero.addEventListener('pointerleave', () => { tx = ty = 0; });
+
+  (function frame() {
+    rx = lerp(rx, mx, .16); ry = lerp(ry, my, .16);
+    dot.style.transform = `translate(${mx}px, ${my}px)`;
+    ring.style.transform = `translate(${rx}px, ${ry}px)`;
+    if (!calm) {
+      hx = lerp(hx, tx, .08); hy = lerp(hy, ty, .08);
+      persona.style.transform = `rotateY(${hx * 16}deg) rotateX(${-hy * 6}deg) translateX(${hx * 14}px)`;
+      layers.forEach(l => { const d = +l.dataset.depth; l.style.transform = `translate(${hx * d}px, ${hy * d * .6}px)`; });
+    }
+    requestAnimationFrame(frame);
+  })();
+
+  $$('a, button').forEach(el => {
+    el.addEventListener('pointerenter', () => ring.style.scale = 1.5);
+    el.addEventListener('pointerleave', () => ring.style.scale = 1);
+  });
+  $$('[data-cursor]').forEach(el => {
+    el.addEventListener('pointerenter', () => { label.textContent = el.dataset.cursor; ring.classList.add('big'); ring.style.scale = 1.95; });
+    el.addEventListener('pointerleave', () => { ring.classList.remove('big'); ring.style.scale = 1; });
+  });
+
+  // magnetic buttons
+  if (fine && !calm) $$('.magnetic').forEach(el => {
+    el.addEventListener('pointermove', e => {
+      const r = el.getBoundingClientRect();
+      el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .25}px, ${(e.clientY - r.top - r.height / 2) * .35}px)`;
+    });
+    el.addEventListener('pointerleave', () => el.style.transform = '');
+  });
+
+  // cursor spotlight inside skill cards
+  $$('.skill .core').forEach(c => c.addEventListener('pointermove', e => {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', e.clientX - r.left + 'px');
+    c.style.setProperty('--my', e.clientY - r.top + 'px');
+  }));
+
+  // reveal on view + count-up
+  const countUp = el => {
+    const to = +el.dataset.count, suf = el.dataset.suffix || '', s = performance.now();
+    (function step(t) {
+      const p = Math.min((t - s) / 1800, 1);
+      el.textContent = Math.round(to * (1 - Math.pow(1 - p, 4))).toLocaleString('en-US') + suf;
+      if (p < 1) requestAnimationFrame(step);
+    })(s);
+  };
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    $$('[data-count]', e.target).forEach(countUp);
+    io.unobserve(e.target);
+  }), { threshold: .15, rootMargin: '0px 0px -40px 0px' });
+  $$('.reveal').forEach(el => io.observe(el));
+
+  // statement words light up while scrolling
+  const st = $('.statement'), hl = st.dataset.hl.split(' ');
+  st.innerHTML = st.textContent.split(' ').map(w => `<span class="w${hl.some(h => w.startsWith(h)) ? ' hl' : ''}">${w}</span>`).join(' ');
+  const words = $$('.w', st);
+
+  // nav state
+  const nav = $('.nav'), pill = $('.pill', nav), navLinks = $$('.links a', nav);
+  const targets = navLinks.map(a => $(a.getAttribute('href')));
+  const movePill = a => {
+    if (!a) return pill.style.opacity = 0;
+    pill.style.opacity = 1; pill.style.width = a.offsetWidth + 'px';
+    pill.style.transform = `translateX(${a.offsetLeft}px)`;
+  };
+
+  // pinned horizontal key moments (desktop)
+  const hs = $('.hscroll'), track = $('.track', hs);
+  const cur = $('.counter .cur'), pbar = $('.counter .pbar i');
+  const desktop = matchMedia('(min-width: 901px)');
+  const setCounter = pr => {
+    cur.textContent = String(Math.min(6, Math.floor(pr * 5.99) + 1)).padStart(2, '0');
+    pbar.style.transform = `scaleX(${Math.max(pr, 1 / 6)})`;
+  };
+  const sizeH = () => { hs.style.height = desktop.matches ? (track.scrollWidth - innerWidth + innerHeight * 1.15) + 'px' : ''; };
+  addEventListener('resize', sizeH); addEventListener('load', sizeH); document.fonts.ready.then(sizeH); sizeH();
+
+  const bar = $('.progress');
+  let ticking = false;
+  const onScroll = () => {
+    ticking = false;
+    const y = scrollY;
+    bar.style.transform = `scaleX(${y / (document.documentElement.scrollHeight - innerHeight)})`;
+    nav.classList.toggle('solid', y > innerHeight * .7);
+
+    const r = st.getBoundingClientRect();
+    const p = Math.min(Math.max((innerHeight * .85 - r.top) / (r.height + innerHeight * .4), 0), 1);
+    const on = Math.round(p * words.length);
+    words.forEach((w, i) => w.classList.toggle('on', i < on));
+
+    let active = null;
+    targets.forEach((s, i) => { const b = s.getBoundingClientRect(); if (b.top < innerHeight * .4 && b.bottom > innerHeight * .4) active = navLinks[i]; });
+    navLinks.forEach(a => a.classList.toggle('active', a === active));
+    movePill(active);
+
+    if (desktop.matches) {
+      const span = hs.offsetHeight - innerHeight;
+      const pr = Math.min(Math.max(-hs.getBoundingClientRect().top / span, 0), 1);
+      track.style.transform = `translateX(${-pr * (track.scrollWidth - innerWidth)}px)`;
+      setCounter(pr);
+    }
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  onScroll();
+
+  // mobile: native swipe drives the counter
+  track.addEventListener('scroll', () => {
+    if (!desktop.matches) setCounter(track.scrollLeft / (track.scrollWidth - track.clientWidth || 1));
+  }, { passive: true });
+
+  // anchors + mobile menu
+  const burger = $('.burger'), overlay = $('.overlay');
+  const setMenu = open => {
+    document.body.classList.toggle('menu-open', open);
+    burger.setAttribute('aria-expanded', open);
+    overlay.setAttribute('aria-hidden', !open);
+  };
+  burger.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
+  $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const t = $(a.getAttribute('href')); if (!t) return;
+    e.preventDefault(); setMenu(false);
+    scrollTo({ top: t.getBoundingClientRect().top + scrollY, behavior: calm ? 'auto' : 'smooth' });
+  }));
+
+  // copy email
+  const toast = $('.toast');
+  $$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+    let msg = 'Email copied';
+    try { await navigator.clipboard.writeText(b.dataset.copy); } catch { msg = b.dataset.copy; }
+    $('span', toast).textContent = msg;
+    toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2200);
+  }));
+})();
+</script>
+</body>
+</html>
