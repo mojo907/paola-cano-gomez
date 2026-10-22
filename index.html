@@ -70,9 +70,14 @@
   .nav.solid { background: rgba(14,10,11,.72); border-color: rgba(255,255,255,.1); }
   .nav .mono { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--red); font-family: Yellowtail, cursive; font-size: 1.3rem; margin-right: 6px; }
   .nav .links { display: flex; gap: 2px; position: relative; }
-  .nav .links a { position: relative; z-index: 1; font-size: .8rem; font-weight: 500; padding: 9px 16px; border-radius: 999px; }
+  .nav .links a { position: relative; z-index: 1; font-size: .8rem; font-weight: 500; padding: 9px 16px; border-radius: 999px; white-space: nowrap; }
   .nav .pill { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 999px; background: rgba(255,255,255,.18); transition: transform .6s var(--ease), opacity .3s; opacity: 0; }
   .nav .cta { margin-left: 6px; }
+  .lang-sw { display: flex; gap: 2px; margin-left: 6px; padding: 4px; border: 0; border-radius: 999px; cursor: pointer;
+    background: rgba(255,255,255,.14); color: #fff; font: 600 .72rem/1 "Plus Jakarta Sans", system-ui, sans-serif; letter-spacing: .08em; }
+  .lang-sw span { padding: 8px 10px; border-radius: 999px; transition: background .4s var(--ease), color .4s var(--ease); }
+  .lang-sw span.on { background: #fff; color: var(--ink); }
+  .lang-sw:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   .burger { display: none; width: 42px; height: 42px; border-radius: 50%; border: 0; background: #fff; position: relative; cursor: pointer; }
   .burger span { position: absolute; left: 12px; right: 12px; height: 1.5px; background: var(--ink); transition: transform .5s var(--ease); }
   .burger span:nth-child(1) { top: 16px; } .burger span:nth-child(2) { top: 24px; }
@@ -89,7 +94,7 @@
   .menu-open .overlay a:nth-child(4) { transition-delay: .18s; } .menu-open .overlay a:nth-child(5) { transition-delay: .24s; } .menu-open .overlay a:nth-child(6) { transition-delay: .3s; }
 
   /* ---------- buttons (button-in-button) ---------- */
-  .btn { display: inline-flex; align-items: center; gap: 14px; padding: 7px 7px 7px 24px; border-radius: 999px; font-weight: 600; font-size: .9rem; cursor: pointer; border: 0; font-family: inherit;
+  .btn { white-space: nowrap; display: inline-flex; align-items: center; gap: 14px; padding: 7px 7px 7px 24px; border-radius: 999px; font-weight: 600; font-size: .9rem; cursor: pointer; border: 0; font-family: inherit;
     transition: transform .5s var(--ease), background .4s var(--ease), color .4s; }
   .btn:active { transform: scale(.97); }
   .btn .ic { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 1.05rem; transition: transform .5s var(--spring); }
@@ -374,6 +379,7 @@
     .nav { top: calc(14px + env(safe-area-inset-top, 0px)); width: calc(100% - 32px); justify-content: space-between; }
     .nav .links, .nav .cta { display: none; }
     .burger { display: block; }
+    .lang-sw { margin-left: auto; margin-right: 8px; }
     .hero-grid { grid-template-columns: 1fr; padding: 110px 16px 0; text-align: center; }
     .intro { padding-top: 0; }
     .role, .sub { margin-left: auto; margin-right: auto; }
@@ -446,6 +452,7 @@
     <a href="#gallery">Gallery</a>
     <a href="#experience">Experience</a>
   </div>
+  <button class="lang-sw" type="button" aria-label="Switch language / Cambiar idioma"><span data-l="en">EN</span><span data-l="es">ES</span></button>
   <a href="#contact" class="btn btn-white btn-sm cta magnetic">Let's talk <span class="ic"><i class="ph-light ph-arrow-up-right"></i></span></a>
   <button class="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
 </nav>
@@ -696,7 +703,201 @@
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerp = (a, b, k) => a + (b - a) * k;
+
+  // ---- Spanish copy, keyed by the English text it replaces
+  const ES = {
+    'Portfolio 2026': 'Portafolio 2026',
+    'View': 'Ver',
+    'Hola!': '¡Hola!',
+    'Email copied': 'Correo copiado',
+    'Main': 'Principal',
+    'Back to top': 'Volver arriba',
+    'Open menu': 'Abrir menú',
+    'About': 'Sobre mí',
+    'Skills': 'Habilidades',
+    'Work': 'Trabajo',
+    'Gallery': 'Galería',
+    'Experience': 'Experiencia',
+    "Let's talk": 'Hablemos',
+    'Key': 'Momentos',
+    'moments': 'clave',
+    "Let's": 'Vamos a',
+    'talk': 'hablar',
+    'OPERATIONS': 'OPERACIONES',
+    "Hi, I'm": 'Hola, soy',
+    'Event Operations across': 'Operaciones de eventos en',
+    'sports, entertainment': 'deporte, entretenimiento',
+    '& hospitality.': 'y hospitalidad.',
+    'Live event coordination, logistics, protocol, and athlete & VIP services, from Estadio Azteca to the Paralympic Games in Paris.': 'Coordinación de eventos en vivo, logística, protocolo y atención a atletas y VIP, desde el Estadio Azteca hasta los Juegos Paralímpicos de París.',
+    'See my work': 'Ver mi trabajo',
+    'Paola Cano Gómez in a black blazer, smiling and pointing at the camera': 'Paola Cano Gómez con blazer negro, sonriendo y señalando a la cámara',
+    'FIFA World Cup 2026': 'Copa Mundial de la FIFA 2026',
+    'Hospitality · Mexico City': 'Hospitalidad · Ciudad de México',
+    'Paris 2024': 'París 2024',
+    'Paralympic Games': 'Juegos Paralímpicos',
+    '66 countries': '66 países',
+    'Scroll': 'Desliza',
+    'Paralympic Games Paris 2024': 'Juegos Paralímpicos París 2024',
+    'Shakira Stadium Concert': 'Shakira · Concierto en estadio',
+    '01 · About': '01 · Sobre mí',
+    'Professional profile': 'Perfil profesional',
+    'Event operations professional with experience across international sport and live events, including the FIFA World Cup 2026, the Paralympic Games Paris 2024, and the World Para Powerlifting Championship, alongside corporate, social, and broadcast work. Trained in event protocol and sports management in Europe. Comfortable across logistics, hospitality, athlete services, and press coordination, often working across several countries and with more than one team at a time.': 'Profesional en operaciones de eventos con experiencia en deporte internacional y eventos en vivo, incluyendo la Copa Mundial de la FIFA 2026, los Juegos Paralímpicos de París 2024 y el Campeonato Mundial de Para Powerlifting, además de eventos corporativos, sociales y de transmisión. Formada en protocolo de eventos y gestión deportiva en Europa. Se desenvuelve en logística, hospitalidad, servicios a atletas y coordinación de prensa, a menudo trabajando en varios países y con más de un equipo a la vez.',
+    'Live event coordination': 'Coordinación de eventos en vivo',
+    'Logistics': 'Logística',
+    'Protocol': 'Protocolo',
+    'Athlete & VIP services': 'Atención a atletas y VIP',
+    'International events': 'Eventos internacionales',
+    'Countries represented · World Para Powerlifting': 'Países representados · World Para Powerlifting',
+    'Attendees · Shakira stadium concert': 'Asistentes · Concierto de Shakira en estadio',
+    'Countries of operation · MX · FR · GE · ES': 'Países de operación · MX · FR · GE · ES',
+    'Languages': 'Idiomas',
+    'Spanish': 'Español',
+    'Native': 'Nativo',
+    'English': 'Inglés',
+    'C1 — Advanced': 'C1 — Avanzado',
+    'French': 'Francés',
+    'A1/A2 — Beginner': 'A1/A2 — Principiante',
+    'Trained in Europe': 'Formación en Europa',
+    '& Escuela Internacional de Protocolo,': 'y Escuela Internacional de Protocolo,',
+    'Event protocol and sports management, put to work on matchdays, concerts and championships.': 'Protocolo de eventos y gestión deportiva, aplicados en días de partido, conciertos y campeonatos.',
+    '02 · Skills': '02 · Habilidades',
+    'Core': 'Competencias',
+    'competencies': 'clave',
+    "Six things I bring to every venue, whether it's a VIP lounge, a backstage corridor or an anti-doping station.": 'Seis cosas que llevo a cada sede, ya sea un salón VIP, un pasillo de backstage o una estación antidopaje.',
+    'Event Protocol & Accreditation': 'Protocolo y acreditación de eventos',
+    'Planning access, credentialing, and formal protocol for high-profile events.': 'Planeación de accesos, acreditaciones y protocolo formal para eventos de alto perfil.',
+    'Hospitality & Athlete / VIP Services': 'Hospitalidad y servicios a atletas / VIP',
+    'Guest experience, athlete services, and VIP care under tight schedules.': 'Experiencia de invitados, servicios a atletas y atención VIP con tiempos ajustados.',
+    'Logistics Coordination': 'Coordinación logística',
+    'Multi-team, multi-country logistics from setup through breakdown.': 'Logística con varios equipos y países, del montaje al desmontaje.',
+    'Press & Media Coordination': 'Coordinación de prensa y medios',
+    'Media access, matchday interviews, and press-committee support.': 'Acceso de medios, entrevistas en día de partido y apoyo al comité de prensa.',
+    'Vendor & Supplier Coordination': 'Coordinación de proveedores',
+    'Recruiting, onboarding, and managing vendor relationships on-site.': 'Búsqueda, incorporación y gestión de proveedores en sitio.',
+    'On-site Problem Resolution': 'Resolución de problemas en sitio',
+    'Calm, fast decision-making under pressure, live, in the moment.': 'Decisiones rápidas y con calma bajo presión, en vivo y en el momento.',
+    '03 · Selected work': '03 · Trabajo destacado',
+    'Open photos': 'Abrir fotos',
+    'AUG – SEP 2024': 'AGO – SEP 2024',
+    'APR – JUN 2024': 'ABR – JUN 2024',
+    'Hospitality Services': 'Servicios de hospitalidad',
+    'FIFA World Cup 2026 · Mexico City': 'Copa Mundial de la FIFA 2026 · Ciudad de México',
+    'Managed the guest experience inside the VIP hospitality lounges at Estadio Azteca, handling check-in, seating, and service for around 500 high-profile guests across 5 matchdays.': 'Gestioné la experiencia de los invitados en los salones VIP de hospitalidad del Estadio Azteca: registro, asignación de lugares y servicio para cerca de 500 invitados de alto perfil durante 5 días de partido.',
+    'Under pressure': 'Bajo presión',
+    'Schedules changed with little notice, so I prioritized on the spot and stayed in constant contact with security and venue staff so the guest experience never showed the pressure behind it.': 'Los horarios cambiaban casi sin aviso, así que prioricé sobre la marcha y mantuve comunicación constante con seguridad y el personal de la sede para que la experiencia de los invitados nunca reflejara la presión detrás.',
+    'Equipment Unit Staff — Para Powerlifting': 'Staff de la Unidad de Equipamiento — Para Powerlifting',
+    'Paralympic Games Paris 2024 · Paris': 'Juegos Paralímpicos París 2024 · París',
+    'Supported the international operations team responsible for competition equipment, making sure every piece met technical and classification requirements ahead of each session.': 'Apoyé al equipo internacional de operaciones responsable del equipamiento de competencia, asegurando que cada pieza cumpliera los requisitos técnicos y de clasificación antes de cada sesión.',
+    "One equipment error could affect an athlete's eligibility, so I double-checked every detail against strict Paralympic protocol with a multinational team, across language differences.": 'Un error en el equipo podía afectar la elegibilidad de un atleta, así que revisé cada detalle con un equipo multinacional conforme al estricto protocolo paralímpico, a pesar de las diferencias de idioma.',
+    'Production & Logistics Staff': 'Staff de producción y logística',
+    'World Para Powerlifting Championship · Tbilisi': 'Campeonato Mundial de Para Powerlifting · Tiflis',
+    'Coordinated athlete transport and arrivals before the championship, then managed venue production and visuals during competition, alongside the live streaming broadcast.': 'Coordiné el transporte y la llegada de atletas antes del campeonato y después gestioné la producción y los visuales de la sede durante la competencia, junto con la transmisión en vivo.',
+    'We bridged the language barrier with the Georgian team through simple language, visual cues and constant check-ins, while splitting focus between the venue and the stream.': 'Superamos la barrera del idioma con el equipo georgiano usando lenguaje sencillo, señales visuales y revisiones constantes, mientras dividía mi atención entre la sede y la transmisión.',
+    'Production & Fan Experience Staff': 'Staff de producción y experiencia de fans',
+    'Shakira — Stadium Concert · Querétaro': 'Shakira — Concierto en estadio · Querétaro',
+    'Coordinated the fans selected to enter alongside the artist, managing section upgrades from B to A, then locating each fan and personally walking them to their spot.': 'Coordiné a los fans seleccionados para entrar junto a la artista, gestionando cambios de la sección B a la A, para luego localizar a cada fan y acompañarlo personalmente a su lugar.',
+    'With around 40,000 people in the stadium, I kept track of specific fans in the crowd and made every upgrade happen without holding up the flow of the show.': 'Con cerca de 40,000 personas en el estadio, ubiqué a fans específicos entre la multitud y logré cada cambio sin frenar el ritmo del show.',
+    'Backstage Coordinator': 'Coordinadora de backstage',
+    'TikTok Awards 2026 · Mexico City': 'TikTok Awards 2026 · Ciudad de México',
+    'Coordinated the arrival of 20 artists with the backstage team and had every dressing room ready. Once the broadcast went live, I walked each artist to backstage in time for their performance.': 'Coordiné con el equipo de backstage la llegada de 20 artistas y dejé listo cada camerino. Ya en transmisión en vivo, acompañé a cada artista al backstage a tiempo para su presentación.',
+    'Twenty schedules at once meant constant check-ins, catching delays early, and adjusting the lineup on the fly when an artist needed more time.': 'Veinte agendas a la vez implicaban revisiones constantes, detectar retrasos a tiempo y ajustar el orden sobre la marcha cuando un artista necesitaba más tiempo.',
+    'Anti-Doping & Athlete Services': 'Antidopaje y servicios a atletas',
+    'Supported anti-doping procedures for around 48 players, following official WTA protocol and chaperoning athletes through each stage of the process.': 'Apoyé los procedimientos antidopaje de cerca de 48 jugadoras, siguiendo el protocolo oficial de la WTA y acompañando a las atletas en cada etapa del proceso.',
+    'Precision and discretion over visible production: every step documented correctly, every interaction handled with care, because one small slip could compromise the process.': 'Precisión y discreción por encima de la producción visible: cada paso documentado correctamente y cada interacción cuidada, porque un pequeño error podía comprometer el proceso.',
+    'Your event': 'Tu evento',
+    'could be next.': 'podría ser el siguiente.',
+    '04 · On the ground': '04 · En sitio',
+    'Behind the': 'Detrás de',
+    'scenes': 'cámaras',
+    'Venues, backstage corridors and control rooms. Filter by event and tap any photo to open it full screen.': 'Sedes, pasillos de backstage y salas de control. Filtra por evento y toca cualquier foto para verla en pantalla completa.',
+    'Filter photos by event': 'Filtrar fotos por evento',
+    '05 · Experience': '05 · Experiencia',
+    'Full career': 'Trayectoria',
+    'timeline': 'completa',
+    'Twelve roles across football, Paralympic sport, tennis, music and weddings, from 2024 to today.': 'Doce roles en fútbol, deporte paralímpico, tenis, música y bodas, de 2024 a hoy.',
+    'FEB–APR 2026': 'FEB–ABR 2026',
+    'JAN 2026': 'ENE 2026',
+    'AUG–SEP 2024': 'AGO–SEP 2024',
+    'APR–JUN 2024': 'ABR–JUN 2024',
+    'Access & Attendee Coordinator': 'Coordinadora de accesos y asistentes',
+    'Mexican Football Federation (FMF) — National Congress': 'Federación Mexicana de Fútbol (FMF) — Congreso Nacional',
+    'Vendor Development Coordinator': 'Coordinadora de desarrollo de proveedores',
+    'Wedding & Social Events Coordinator': 'Coordinadora de bodas y eventos sociales',
+    'Protocol & Logistics Staff': 'Staff de protocolo y logística',
+    'Premios AEVEA (Spanish Wedding Industry Awards) · Madrid': 'Premios AEVEA (industria nupcial española) · Madrid',
+    'Press Staff (Freelance)': 'Staff de prensa (freelance)',
+    "Querétaro Fútbol Club (Liga MX) — Men's & Women's Teams": 'Querétaro Fútbol Club (Liga MX) — Equipos varonil y femenil',
+    'Equipment Unit Staff (Volunteer)': 'Staff de la Unidad de Equipamiento (voluntaria)',
+    'Paralympic Games Paris 2024 · Para Powerlifting': 'Juegos Paralímpicos París 2024 · Para Powerlifting',
+    'Press Committee Member / Community Manager': 'Miembro del comité de prensa / Community Manager',
+    'Acción Sports Leadership Program · La Esférica MX': 'Programa de Liderazgo Deportivo Acción · La Esférica MX',
+    '06 · Education': '06 · Formación',
+    'Where I': 'Dónde me',
+    'trained': 'formé',
+    'B.A., Entertainment Business Management': 'Licenciatura en Dirección de Empresas de Entretenimiento',
+    'Universidad Anáhuac Querétaro · Minor in Sports Business Management': 'Universidad Anáhuac Querétaro · Minor en Dirección de Empresas Deportivas',
+    'Specialization, Event Management': 'Especialización en Gestión de Eventos',
+    'Escuela Internacional de Protocolo · Madrid, Spain': 'Escuela Internacional de Protocolo · Madrid, España',
+    'JAN – JUN 2025': 'ENE – JUN 2025',
+    'Diploma, Sport Management': 'Diplomado en Gestión Deportiva',
+    'Cruyff Institute · Barcelona, Spain': 'Cruyff Institute · Barcelona, España',
+    'DEC 2025': 'DIC 2025',
+    'Diploma, Leadership in Sport': 'Diplomado en Liderazgo Deportivo',
+    'JUN 2023 – DEC 2026': 'JUN 2023 – DIC 2026',
+    '07 · Contact': '07 · Contacto',
+    "Let's work": 'Trabajemos',
+    'together': 'juntos',
+    'Email': 'Correo',
+    'Copy email address': 'Copiar correo',
+    'Phone': 'Teléfono',
+    'Send an email': 'Enviar un correo',
+    'Reference': 'Referencia',
+    'Program Director, Entertainment Business Management, Universidad Anáhuac Querétaro': 'Director del Programa de Dirección de Empresas de Entretenimiento, Universidad Anáhuac Querétaro',
+    'Paola Cano Gómez · Professional Portfolio 2026': 'Paola Cano Gómez · Portafolio profesional 2026',
+    'Photo viewer': 'Visor de fotos',
+    'Close': 'Cerrar',
+    'Previous photo': 'Foto anterior',
+    'Next photo': 'Foto siguiente',
+    // generated: gallery, chips, captions
+    'All': 'Todas',
+    '4 photos': '4 fotos',
+    '5 photos': '5 fotos',
+    'World Para Powerlifting · Tbilisi': 'World Para Powerlifting · Tiflis',
+    'Shakira · Stadium Concert': 'Shakira · Concierto en estadio',
+    'Matchday at Estadio Ciudad de México': 'Día de partido en el Estadio Ciudad de México',
+    'The hospitality team at the FIFA World Cup 2026 desk': 'El equipo de hospitalidad en el módulo de la Copa Mundial de la FIFA 2026',
+    'Inside the VIP hospitality lounge': 'Dentro del salón VIP de hospitalidad',
+    'Kick-off from the stands': 'El arranque del partido desde las gradas',
+    'Outside the stadium before the gates open': 'Afuera del estadio antes de abrir puertas',
+    'On the field of play, Para Powerlifting': 'En el área de competencia, Para Powerlifting',
+    'The international equipment unit team': 'El equipo internacional de la unidad de equipamiento',
+    'Warm-up area set for competition': 'Zona de calentamiento lista para competir',
+    'Start lists checked against protocol': 'Listas de salida revisadas según protocolo',
+    'Running venue production and visuals': 'Operando la producción y los visuales de la sede',
+    'The Anáhuac team at the Para Powerlifting World Cup': 'El equipo Anáhuac en la Copa del Mundo de Para Powerlifting',
+    'Medal ceremony on the podium': 'Ceremonia de premiación en el podio',
+    'Production desk during competition': 'Mesa de producción durante la competencia',
+    'Live stream and timing setup': 'Montaje de transmisión en vivo y cronometraje',
+    'The fan experience crew on the pitch': 'El equipo de experiencia de fans en la cancha',
+    'Fireworks over the stage': 'Fuegos artificiales sobre el escenario',
+    'Selected fans ready to go in': 'Fans seleccionados listos para entrar',
+    'The stage before doors open': 'El escenario antes de abrir puertas',
+    'Backstage crew on the TikTok Awards stage': 'Equipo de backstage en el escenario de los TikTok Awards',
+    'Live performance during the broadcast': 'Presentación en vivo durante la transmisión',
+    'The set before the show': 'El set antes del show',
+    'Dressing room ready for an artist': 'Camerino listo para un artista',
+    'Courtside at the WTA 125': 'A pie de cancha en el WTA 125',
+    'Athlete services staff on the move': 'Staff de servicios a atletas en movimiento',
+    'A player between points': 'Una jugadora entre puntos',
+    'Night session under the lights': 'Sesión nocturna bajo las luces'
+  };
+  const STATEMENT_ES = ['Hago que los eventos en vivo fluyan con calma, precisión y a tiempo: más de 12 eventos internacionales, multitudes de 40,000 personas, cuatro países de operación y atletas de 66 naciones.', '12 40,000 cuatro 66'];
+  let lang = '';
+  try { lang = localStorage.getItem('lang') || ''; } catch {}
+  if (lang !== 'en' && lang !== 'es') lang = /^es/i.test(navigator.language || '') ? 'es' : 'en';
+  const t = s => (lang === 'es' && ES[s]) || s;
+
 
   // ---- photos from the Canva deck: [file, w, h, caption]
   const EVENTS = {
@@ -744,10 +945,10 @@
     const p = lbList[lbI];
     lbImg.classList.remove('on');
     lbImg.onload = () => lbImg.classList.add('on');
-    lbImg.src = src(p.f); lbImg.alt = p.cap;
+    lbImg.src = src(p.f); lbImg.alt = t(p.cap);
     lbCount.textContent = `${lbI + 1} / ${lbList.length}`;
-    $('.lb-cap span', lb).textContent = p.label;
-    $('.lb-cap b', lb).textContent = p.cap;
+    $('.lb-cap span', lb).textContent = t(p.label);
+    $('.lb-cap b', lb).textContent = t(p.cap);
   };
   const lbOpen = (list, i) => {
     lbList = list; lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false');
@@ -903,9 +1104,15 @@
   $$('.reveal').forEach(el => io.observe(el));
 
   // statement words light up while scrolling
-  const st = $('.statement'), hl = st.dataset.hl.split(' ');
-  st.innerHTML = st.textContent.split(' ').map(w => `<span class="w${hl.some(h => w.startsWith(h)) ? ' hl' : ''}">${w}</span>`).join(' ');
-  const words = $$('.w', st);
+  const st = $('.statement');
+  const STATEMENT = { en: [st.textContent, st.dataset.hl], es: STATEMENT_ES };
+  let words = [];
+  const buildStatement = () => {
+    const [txt, hlS] = STATEMENT[lang], hl = hlS.split(' ');
+    st.innerHTML = txt.split(' ').map(w => `<span class="w${hl.some(h => w.startsWith(h)) ? ' hl' : ''}">${w}</span>`).join(' ');
+    words = $$('.w', st);
+  };
+  buildStatement();
 
   // nav state
   const nav = $('.nav'), pill = $('.pill', nav), navLinks = $$('.links a', nav);
@@ -974,10 +1181,36 @@
     scrollTo({ top: t.getBoundingClientRect().top + scrollY, behavior: calm ? 'auto' : 'smooth' });
   }));
 
+  // language: swap text nodes + labels against the ES table (English is the source)
+  const origText = new WeakMap(), origAttr = new WeakMap(), ATTRS = ['aria-label', 'alt', 'data-cursor'];
+  const sw = $('.lang-sw');
+  const applyLang = () => {
+    document.documentElement.lang = lang;
+    const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: n => n.parentElement.closest('script, style, .statement, .name, .count, .lang-sw') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+    for (let n; (n = walk.nextNode());) {
+      if (!origText.has(n)) origText.set(n, n.nodeValue);
+      const o = origText.get(n), k = o.trim();
+      if (k) n.nodeValue = lang === 'es' && ES[k] ? o.replace(k, ES[k]) : o;
+    }
+    $$(ATTRS.map(a => `[${a}]`).join()).forEach(el => {
+      if (el.closest('.lang-sw')) return;
+      if (!origAttr.has(el)) origAttr.set(el, Object.fromEntries(ATTRS.filter(a => el.hasAttribute(a)).map(a => [a, el.getAttribute(a)])));
+      Object.entries(origAttr.get(el)).forEach(([a, v]) => el.setAttribute(a, t(v)));
+    });
+    $$('span', sw).forEach(s => s.classList.toggle('on', s.dataset.l === lang));
+  };
+  sw.addEventListener('click', () => {
+    lang = lang === 'es' ? 'en' : 'es';
+    try { localStorage.setItem('lang', lang); } catch {}
+    applyLang(); buildStatement(); sizeH(); onScroll();
+  });
+  applyLang();
+
   // copy email
   const toast = $('.toast');
   $$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
-    let msg = 'Email copied';
+    let msg = t('Email copied');
     try { await navigator.clipboard.writeText(b.dataset.copy); } catch { msg = b.dataset.copy; }
     $('span', toast).textContent = msg;
     toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2200);
