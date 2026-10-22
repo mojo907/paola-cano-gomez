@@ -188,8 +188,8 @@
   .statement .w.hl { color: #c41208; }
   .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
   .b-portrait { grid-column: span 4; grid-row: span 3; }
-  .b-portrait .core { padding: 0; min-height: 520px; background: linear-gradient(160deg, var(--red), var(--wine)); display: flex; align-items: flex-end; justify-content: center; }
-  .b-portrait img { width: 92%; display: block; filter: grayscale(1) contrast(1.05); transition: filter 1s var(--ease), transform 1.2s var(--ease); transform-origin: 50% 100%;
+  .b-portrait .core { padding: 56px 0 0; min-height: 520px; background: linear-gradient(160deg, var(--red), var(--wine)); display: flex; align-items: flex-end; justify-content: center; }
+  .b-portrait img { width: 92%; height: auto; max-height: 100%; object-fit: contain; display: block; filter: grayscale(1) contrast(1.05); transition: filter 1s var(--ease), transform 1.2s var(--ease); transform-origin: 50% 100%;
     -webkit-mask-image: linear-gradient(to top, transparent 0, #000 14%); mask-image: linear-gradient(to top, transparent 0, #000 14%); }
   .b-portrait:hover img { filter: none; transform: scale(1.04); }
   .b-portrait .tag { position: absolute; left: 20px; top: 20px; right: 20px; display: flex; justify-content: space-between; color: #fff; font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; z-index: 1; }
@@ -505,7 +505,7 @@
       <div class="shell b-portrait reveal" data-cursor="Hola!">
         <div class="core">
           <div class="tag"><span>Paola Cano Gómez</span><span>2026</span></div>
-          <img src="assets/paola-about.webp" alt="" width="730" height="1050" loading="lazy">
+          <img src="assets/paola-about.webp?v=2" alt="" width="1117" height="1400" loading="lazy">
         </div>
       </div>
       <div class="shell b-bio reveal d1">
