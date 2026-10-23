@@ -161,7 +161,7 @@
   .chip.c1 { left: 0; top: 26%; } .chip.c2 { right: -10px; top: 46%; } .chip.c3 { left: 6%; bottom: 20%; }
 
   .marquee { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; overflow: hidden; padding: 16px 0; background: rgba(14,10,11,.88); color: #fff; }
-  .marquee .track { display: flex; width: max-content; animation: marq 38s linear infinite; }
+  .marquee .mtrack { display: flex; width: max-content; animation: marq 38s linear infinite; }
   .marquee span { display: inline-flex; align-items: center; gap: 28px; padding-right: 28px; font-family: var(--display); font-weight: 600; font-size: 1.05rem; letter-spacing: -.01em; white-space: nowrap; }
   .marquee span i { color: var(--red-hot); font-size: .9rem; }
   @keyframes marq { to { transform: translateX(-50%); } }
@@ -425,7 +425,7 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition-duration: .01s !important; transition-delay: 0s !important; }
     /* keep the event tickers moving, just slower */
-    .marquee .track { animation: marq 50s linear infinite !important; }
+    .marquee .mtrack { animation: marq 50s linear infinite !important; }
     .big-marq .track2 { animation: marq 40s linear infinite !important; }
     .reveal, .rise { opacity: 1; transform: none; filter: none; }
     .statement .w { opacity: 1; }
@@ -498,7 +498,7 @@
 
   <div class="scroll-cue"><span class="line"></span>Scroll</div>
   <div class="marquee" aria-hidden="true">
-    <div class="track">
+    <div class="mtrack">
       <span>FIFA World Cup 2026 <i class="ph-light ph-asterisk"></i> Paralympic Games Paris 2024 <i class="ph-light ph-asterisk"></i> World Para Powerlifting <i class="ph-light ph-asterisk"></i> TikTok Awards 2026 <i class="ph-light ph-asterisk"></i> WTA 125 <i class="ph-light ph-asterisk"></i> Shakira Stadium Concert <i class="ph-light ph-asterisk"></i> Liga MX <i class="ph-light ph-asterisk"></i></span>
       <span>FIFA World Cup 2026 <i class="ph-light ph-asterisk"></i> Paralympic Games Paris 2024 <i class="ph-light ph-asterisk"></i> World Para Powerlifting <i class="ph-light ph-asterisk"></i> TikTok Awards 2026 <i class="ph-light ph-asterisk"></i> WTA 125 <i class="ph-light ph-asterisk"></i> Shakira Stadium Concert <i class="ph-light ph-asterisk"></i> Liga MX <i class="ph-light ph-asterisk"></i></span>
     </div>
