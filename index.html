@@ -424,6 +424,9 @@
   @media (hover: none), (pointer: coarse) { .cursor-dot, .cursor-ring { display: none; } }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition-duration: .01s !important; transition-delay: 0s !important; }
+    /* keep the event tickers moving, just slower */
+    .marquee .track { animation: marq 80s linear infinite !important; }
+    .big-marq .track2 { animation: marq 60s linear infinite !important; }
     .reveal, .rise { opacity: 1; transform: none; filter: none; }
     .statement .w { opacity: 1; }
   }
